@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=moransi
+#SBATCH --partition=batch
+#SBATCH --time=8:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=128GB
+#SBATCH --account=delitto
+
+echo "The current Slurm job name is $SLURM_JOB_NAME"
+echo "Job started at $(date)"
+eval "$(conda shell.bash hook)"
+conda activate /home/jpagolia/miniforge3/envs/jpa_squidpy
+echo "The current conda environment is $CONDA_PREFIX"
+# Export the number of cpus per task so Numba can read it automatically
+export NUMBA_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+python -u moransi.py
+
+conda deactivate
+echo "Job finished at: $(date)"
